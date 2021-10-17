@@ -1,23 +1,12 @@
 package com.company;
 
-import com.sun.xml.internal.ws.commons.xmlutil.Converter;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Main {
     // вариант 10 Y=ln(2x)
 
     public static void main(String[] args) {
         // 1. Получаем рандомные х из отрезка от 0 до 10
-        double[] x = getRandomArray(100);
-        //System.out.println(printArray(x));
 
-       // System.out.println("************* Y = *************");
-
-        // Получаем Y=ln(2x)
-        double[] y = createFunction(x);
-        //System.out.println(printArray(y));
 
         // 2. Создать популяцию из 20 особей, со ста признаками, соответствующими отрезку
         // [0..10] (интервал между признаками = 0,1)
@@ -62,62 +51,7 @@ public class Main {
 
     }
 
-    public static double[] getRandomArray(int countOfElements) {
-        double[] randomArray = new double[countOfElements];
-        for (int i = 0; i < countOfElements; i++){
-            randomArray[i] = (Math.random() * ((9 - 0) + 1)) + 0;
-        }
-        return randomArray;
-    }
 
-    public static String printArray(double[] array){
-        String result = "";
-        for (int i = 0; i < array.length; i++){
-            result += Double.toString(array[i]) + '\n';
-        }
-        return result;
-    }
-
-    // создаем искомую функцию Y=ln(2x)
-    public static double[] createFunction(double[] x){
-        int countOfElements = x.length;
-        double[] y = new double[countOfElements];
-
-        for (int i = 0; i < countOfElements; i++){
-            y[i] = 2 * Math.log10(x[i]);
-        }
-
-        return y;
-    }
-
-    /**
-     *  Создать популяцию из 20 особей, со ста признаками, соответствующими отрезку
-     *  [0..10] (интервал между признаками = 0,1)
-     * @param numberOfIndividual - количество особей (20)
-     * @param numberOfSigns - количество признаков (100)
-     * @return
-     */
-    public static ArrayList<double[]> createPopulation(int numberOfIndividual, int numberOfSigns){
-        ArrayList<double[]> population = new ArrayList<>();
-
-        // создаем 20 особей, у каждой 100 признаков
-        double lastElement = 0; // последний сгенерированный признак
-        for (int i = 0; i < numberOfIndividual; i++){
-
-            // здесь формируем массив признков с шагом 0.1
-            double[] signs = new double[numberOfSigns]; // массив признаков для текущей особи
-            //signs[0] = lastElement; // присваиваем первому элементу текущего массива последний элемент прошлого массива
-            for (int k = 0; k < numberOfSigns; k++){
-                double step = 0.1;
-                signs[k] = lastElement + step;
-                lastElement = signs[k]; // последний сгенерированный признак
-            }
-
-            population.add(signs); // добавляем в популяцию массив со ста признаками
-        }
-
-        return population;
-    }
 
 
 }
