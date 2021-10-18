@@ -1,6 +1,5 @@
 package com.company;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class Individidual implements Comparable<Individidual>{
@@ -127,10 +126,6 @@ public class Individidual implements Comparable<Individidual>{
         int countOfSigns = parent1.getNumberOfSigns(); // количество признаков в особи
 
         // точка разреза, после которой выполняется разрез хромосомы (получаем рандомно от 1 до последнего признака)
-        int idOfCuttingPoint1 = WorkWithNumbers.getRandomFromTo(0, countOfSigns);
-        int idOfCuttingPoint2 = WorkWithNumbers.getRandomFromTo(0, countOfSigns);
-        int idOfCuttingPoint3 = WorkWithNumbers.getRandomFromTo(0, countOfSigns);
-
         int[] points = WorkWithNumbers.getIntRandomArray(3);
 
         int leftPoint = points[0], rightPoint = points[0], midPoint = points[0];
@@ -243,18 +238,10 @@ public class Individidual implements Comparable<Individidual>{
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("#.##");
-        String formatted = "";
-
-        for (double el:
-             signs) {
-            formatted += df.format(el);
-            formatted += " ";
-        }
-
         return "Individidual{" +
-                "signs= " + formatted +
-                '}' ;
+                "signs=" + Arrays.toString(signs) +
+                ", euclidDist=" + euclidDist +
+                '}';
     }
 
     public double getEuclidDist() {

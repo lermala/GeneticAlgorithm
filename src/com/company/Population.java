@@ -17,7 +17,8 @@ public class Population {
         this.numberOfSigns = numberOfSigns;
 
         // Находим искомую функцию Y=ln(2x)
-        xForRequiredFunc = WorkWithNumbers.getRandomArray(numberOfSigns);
+        //xForRequiredFunc = WorkWithNumbers.getRandomArray(numberOfSigns);
+        xForRequiredFunc = WorkWithNumbers.getArrayFromTo(0.1, 0, 100);
         requiredFunction = getFunction(xForRequiredFunc);
     }
 
@@ -64,25 +65,29 @@ public class Population {
 
     }
 
+    /**
+     * Запускает генетический алгоритм. Здесь в цикле размножение, мутация и удаление особей.
+     * Остановка цикла в случае, если эвклидово рассояние <= 0.5
+     */
     public void startGeneticAlg(){
         System.out.println("************* POPULATION *************");
         System.out.println(population.toString());
 
         // Здесь в цикле будем размножать, уничтожать особи до тех пор, пока эвклидово расстояние не будет равно 0,5.
         final double EUCLIDDIST = 0.5; // Остановить мутационный процесс при достижении эвклидова расстояния = 0,5.
-        double minEuclid = 0.6; // в начале ставим 0.6, так как эвклидово расстояние для особей еще не посчитано
-        Individidual indWithMinEuclidDist = population.get(0); // особь с минимальным эвклидовым расстоянием
+        double minEuclid; // в начале ставим 0.6, так как эвклидово расстояние для особей еще не посчитано
+        Individidual indWithMinEuclidDist; // особь с минимальным эвклидовым расстоянием
         do {
             // 3. Создать алгоритм, размножения и мутации, способный на каждом шаге удваивать популяцию.
-            // crossoverBySinglePointOperator();
-            //crossoverByPointToPointOperator();
-            crossoverByThreePointsOperator();
+            // crossoverBySinglePointOperator(); // одноточечный кроссовер
+            crossoverByPointToPointOperator(); // двухточечный кроссовер
+            //crossoverByThreePointsOperator(); // трехточечный кроссовер
             System.out.println("************* CROSSOVERED POPULATION *************");
             System.out.println(population.toString());
 
             mutate();
-//            System.out.println("************* MUTATED POPULATION *************");
-//            System.out.println(population.toString());
+//          System.out.println("************* MUTATED POPULATION *************");
+//          System.out.println(population.toString());
 
             // 4. Уничтожать половину удвоенной популяции, эвклидово расстояние признаков
             // которых максимально удалено от искомой функции.
@@ -98,6 +103,7 @@ public class Population {
             indWithMinEuclidDist = getIndWithMinEuclidDist(); // особь с min dist
             minEuclid = indWithMinEuclidDist.getEuclidDist();
             System.out.println("МИНИМАЛЬНОЕ ЭВКЛИДОВОЕ РАССТОЯНИЕ = " + minEuclid);
+
 
         } while (minEuclid > EUCLIDDIST); // 5. Остановить мутационный процесс при достижении эвклидова расстояния = 0,5.
 
@@ -197,8 +203,6 @@ public class Population {
             // скрещиваем и получаем еще две особи
             Individidual[] children = Individidual.crossoverByThreePoints(parent1, parent2);
             // вносим особи в популяцию
-            // population.add(children[0]);
-            // population.add(children[1]);
             resOfCrossover.addInd(children[0]);
             resOfCrossover.addInd(children[1]);
         }
@@ -225,8 +229,6 @@ public class Population {
         }
 
     }
-
-
 
     // 4. Уничтожать половину удвоенной популяции, эвклидово расстояние признаков
     // которых максимально удалено от искомой функции.
@@ -353,10 +355,6 @@ public class Population {
         }
 
         return indWithMinEuclid;
-    }
-
-    public void setPopulation(ArrayList<Individidual> population) {
-        this.population = population;
     }
 
     public ArrayList<Individidual> getPopulation() {
