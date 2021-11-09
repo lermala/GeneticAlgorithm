@@ -31,15 +31,19 @@ public class Controller extends Application {
 
         // создаем популяцию с 20ю особями, по 100 признаков у каждой
         Population population = new Population(20, 100);
-        population.createPopulation(); // заполняем популяцию особями
+        population.createPopulation2(); // заполняем популяцию особями
+
         double[] x = population.getxForRequiredFunc();
-        double[] y = population.getRequiredFunction();
+        double[] y = population.getRequiredFunction();//ln
         for (int i = 0; i < x.length; i++){
             series1.getData().add(new XYChart.Data(x[i], y[i]));
         }
 
+        // определение осей
+        final NumberAxis xAxis2 = new NumberAxis();
+        final NumberAxis yAxis2 = new NumberAxis();
         // создание графика
-        final LineChart<Number,Number> lineChart2 = new LineChart<Number,Number>(xAxis,yAxis);
+        final LineChart<Number,Number> lineChart2 = new LineChart<Number,Number>(xAxis2, yAxis2);
 
         // выполняем генетический алгоритм
         population.startGeneticAlg();
@@ -47,8 +51,10 @@ public class Controller extends Application {
         // Делаем график признаков особи с наименьшим эвклидовым расстоянием
         XYChart.Series series2 = new XYChart.Series();
         series2.setName("Признаки особи");
-        double[] x2 = population.getIndWithMinEuclidDist().getSigns();
-        double[] y2 = WorkWithNumbers.getFunction(x2);
+
+        double[] y2 = population.getIndWithMinEuclidDist().getSigns();
+        double[] x2 = x;
+
         // все х и у вбиваем в график поточечно
         for (int i = 0; i < x.length; i++){
             series2.getData().add(new XYChart.Data(x2[i], y2[i]));
@@ -60,9 +66,6 @@ public class Controller extends Application {
 
         FlowPane root = new FlowPane(lineChart, lineChart2);
         Scene scene  = new Scene(root);
-
-        //Scene scene  = new Scene(lineChart, 800,600);
-        // lineChart.getData().addAll(series1, series2);
 
         lineChart.getData().add(series1);
         lineChart2.getData().add(series2);

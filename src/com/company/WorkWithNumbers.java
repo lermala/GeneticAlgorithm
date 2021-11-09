@@ -15,6 +15,11 @@ public class WorkWithNumbers {
         return random_number;
     }
 
+    public static double getRandomDoubleFromTo(double a, double b) {
+        double random_number = a + Math.random() * b;
+        return random_number;
+    }
+
     /**
      * Общая формула евклидова расстояния для n-мерного случая (n переменных)  (https://studopedia.info/5-63128.html)
      * @param x - первая точка
@@ -39,7 +44,6 @@ public class WorkWithNumbers {
      * @return массив чисел
      */
     public static int[] getIntRandomArray(int countOfElements) {
-        // double d = Math.random() * (max - min) + min;
         int[] randomArray = new int[countOfElements];
         for (int i = 0; i < countOfElements; i++){
             randomArray[i] = (int) (Math.random() * ((100 - 0) + 1)) + 0;
@@ -55,13 +59,15 @@ public class WorkWithNumbers {
      */
     public static double[] getRandomArray(int countOfElements) {
         double[] randomArray = new double[countOfElements];
-        double rangeMin = 0.1;
-        double rangeMax = 10.0;
+        double rangeMin = -2.0;
+        double rangeMax = 2.0;
         Random r = new Random();
-        for (int i = 0; i < countOfElements; i++){
+
+        for(int i = 0; i < countOfElements; ++i) {
             randomArray[i] = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
-            randomArray[i] = round(randomArray[i], 1);
+            randomArray[i] = round(randomArray[i], 2);
         }
+
         return randomArray;
     }
 
@@ -69,21 +75,16 @@ public class WorkWithNumbers {
      * Создание массива с заданным шагом от точки start до точки end
      * @param step - шаг
      * @param start - начальная точка
-     * @param end - конечная точка
+     * @param countOfElements - кол-во элементов, которое нужно сгенерить
      * @return
      */
-    public static double[] getArrayFromTo(double step, int start, int end){
-        double[] result = new double[end - start];
-        // здесь формируем массив с шагом
-        double lastElement = 0; // последний сгенерированный признак
-        for (int k = 0; k < end; k++){
-            double currentElement = lastElement + step;  // считаем элмент
+    public static double[] getArrayFromTo(double step, double start, int countOfElements){
+        double[] result = new double[countOfElements];
+        result[0] = start;
 
-            // округляем до 2го знака
-            double scale = Math.pow(10, 1);
-            result[k] = Math.ceil(currentElement * scale) / scale;
-
-            lastElement = result[k]; // последний сгенерированный признак
+        for (int k = 1; k < countOfElements; k++){
+            result[k] = result[k - 1] + step; // считаем значение прибавив к нему шаг
+            result[k] = round(result[k], 1); // округляем до одного знака
         }
         return result;
     }
@@ -94,11 +95,14 @@ public class WorkWithNumbers {
      * @return массив Y = искомая функция для ГА
      */
     public static double[] getFunction(double[] x){
+        // задаем размер массива
         int countOfElements = x.length;
         double[] y = new double[countOfElements];
 
+        // здесь заполняем массив. Y=ln(2x)
         for (int i = 0; i < countOfElements; i++){
             y[i] = 2 * Math.log10(x[i]);
+            y[i] = round(y[i], 2);
         }
 
         return y;
@@ -110,7 +114,7 @@ public class WorkWithNumbers {
      * @param precision - до какого знака
      * @return округленное число
      */
-    private static double round (double value, int precision) {
+    static double round(double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
     }

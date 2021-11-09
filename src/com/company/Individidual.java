@@ -6,11 +6,20 @@ public class Individidual implements Comparable<Individidual>{
     int numberOfSigns; // количество признаков
     double[] signs; // массив признаков для текущей особи
 
-    double euclidDist;
+    double euclidDist; // эвклидово расстояние между особью и искомой функцией
 
     public Individidual(int numberOfSigns) {
         this.numberOfSigns = numberOfSigns;
         signs = new double[numberOfSigns];
+
+//        // считаем х для У. х
+//        double[] x2 = new double[y2.length];
+//        x2[0] = 0;
+//        for (int i = 1; i < y2.length; i++){
+//            x2[i] = x2[i-1] + 0.1;
+//            x2[i] = WorkWithNumbers.round(x2[i], 1);
+//            // System.out.println(x2[i]);
+//        }
     }
 
     public Individidual() {
@@ -206,7 +215,7 @@ public class Individidual implements Comparable<Individidual>{
     public void mutateByThreePoints(){
         int size = numberOfSigns; // количество признаков в особи
 
-        // определяются случайным образом две позиции
+        // определяются случайным образом 3 позиции
         int position1 = WorkWithNumbers.getRandomFromTo(0, size);
         int position2 = WorkWithNumbers.getRandomFromTo(0, size);
         int position3 = WorkWithNumbers.getRandomFromTo(0, size);
@@ -232,8 +241,7 @@ public class Individidual implements Comparable<Individidual>{
      * @return
      */
     public void getEuclidDistanceForSignsWithRequiredFunc(double[] requiredFunction) {
-        double[] A = WorkWithNumbers.getFunction(signs); // т. к. признаки - это значение Х, то считаем У для них
-        euclidDist = WorkWithNumbers.getEuclideanDistance(A, requiredFunction);
+        this.euclidDist = WorkWithNumbers.getEuclideanDistance(this.signs, requiredFunction);
     }
 
     @Override
