@@ -68,7 +68,51 @@ public class Population {
         System.out.println("Количество поколений, прошедших через цикл: " + count);
     }
 
+    /**
+     * Запускает генетический алгоритм. Здесь в цикле размножение, мутация и удаление особей.
+     * Остановка цикла в случае, если эвклидово рассояние <= 0.5
+     */
+    public void startGeneticAlg2(){
+        System.out.println("************* POPULATION *************");
+        System.out.println(population.toString());
 
+        // Здесь в цикле будем размножать, уничтожать особи до тех пор, пока эвклидово расстояние не будет равно 0,5.
+        final double EUCLIDDIST = 0.5; // Остановить мутационный процесс при достижении эвклидова расстояния = 0,5.
+        double minEuclid; // в начале ставим 0.6, так как эвклидово расстояние для особей еще не посчитано
+        Individidual indWithMinEuclidDist; // особь с минимальным эвклидовым расстоянием
+
+        int count = 0; // кол-во популяций, прошедших цикл
+        do {
+            // 3. Создать алгоритм, размножения и мутации, способный на каждом шаге удваивать популяцию.
+            crossoverByTwoPointOperator(); // двухточечный кроссовер
+
+            mutatePopulation();
+
+            // 4. Уничтожать половину удвоенной популяции, эвклидово расстояние признаков
+            // которых максимально удалено от искомой функции.
+            delete();
+
+//            System.out.println("************* DELETED POPULATION *************");
+//            for (int i = 0; i < population.size(); i++){
+//                Individidual ind = population.get(i);
+//                System.out.println(i + ") " + ind.toString() + " euclid=" + ind.getEuclidDist());
+//            }
+
+            // Ищем минимальное эвклидовое расстояние
+            indWithMinEuclidDist = getIndWithMinEuclidDist(); // особь с min dist
+            minEuclid = indWithMinEuclidDist.getEuclidDist();
+            System.out.println("МИНИМАЛЬНОЕ ЭВКЛИДОВОЕ РАССТОЯНИЕ = " + minEuclid);
+            count++;
+            //break;
+
+        } while (minEuclid > 0.5); // 5. Остановить мутационный процесс при достижении эвклидова расстояния = 0,5.
+
+        // 6. Вывести признаки особи с наименьшим эвклидовым расстоянием в виде графика и
+        // рядом график функции для сравнения.
+        // System.out.println("MIN= " + indWithMinEuclidDist.toString());
+        System.out.println("************************************ THE END OF ALG ************************************ ");
+        System.out.println(count + "***");
+    }
 
     /**
      * Создаем начальную популяцию. Создаем 20 особей и заполняем признаки особей рандомными числами при помощи getRandomArray()
