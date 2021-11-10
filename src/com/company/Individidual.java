@@ -1,5 +1,6 @@
 package com.company;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 public class Individidual implements Comparable<Individidual>{
@@ -11,15 +12,6 @@ public class Individidual implements Comparable<Individidual>{
     public Individidual(int numberOfSigns) {
         this.numberOfSigns = numberOfSigns;
         signs = new double[numberOfSigns];
-
-//        // считаем х для У. х
-//        double[] x2 = new double[y2.length];
-//        x2[0] = 0;
-//        for (int i = 1; i < y2.length; i++){
-//            x2[i] = x2[i-1] + 0.1;
-//            x2[i] = WorkWithNumbers.round(x2[i], 1);
-//            // System.out.println(x2[i]);
-//        }
     }
 
     public Individidual() {
@@ -227,256 +219,49 @@ public class Individidual implements Comparable<Individidual>{
         signs[position2] = temp;
     }
 
-    public void mutateByChanging1() {
-        int size = this.numberOfSigns;
-        int position1 = WorkWithNumbers.getRandomFromTo(0, size);
-        int position2 = WorkWithNumbers.getRandomFromTo(0, size);
-        int position3 = WorkWithNumbers.getRandomFromTo(0, size);
-        this.signs[position1] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2.0, 2.), 2);
-        this.signs[position2] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2., 2.), 2);
-        this.signs[position3] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2., 2.), 2);
-    }
-
-    public void mutateByChanging2(int countOfChanging) {
-        int size = this.numberOfSigns;
-
-        for(int i = 0; i < countOfChanging; ++i) {
-            this.signs[i] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2., 2.), 2);
+    /**
+     * Мутация особи при помощи прибавления к признаку числа, т.е.
+     * увеличиваем/уменьшаем признак на шаг step, чтобы приблизить его к искомой функции.
+     * @param fitnessFunc - искомая функция (с ней мы сравниваем признаки)
+     */
+    public void mutateInStepIncrease(double[] fitnessFunc) {
+        // для каждого признака особи:
+        for (int i = 0; i < numberOfSigns; ++i) {
+            double step = getStep(signs[i], fitnessFunc[i]); // вычисляем шаг, который будем прибавлять к признаку
+            signs[i] += step; // увеличиваем признак на найденный шаг
+            signs[i] = WorkWithNumbers.round(signs[i], 2); // округляем
         }
-
     }
 
     /**
-     * Мутация в зависимости от эклидова расстояния. При минимальном - не мутируем.
+     * Функция для вычисления числа (шага), на которое нужно увеличить признак, чтобы приблизить его к искомой функции.
+     * Здесь определяем, в какую сторону будем двигать точку (признак) - вверх или вниз.
+     * Если step отрицательный, то будем двигать вниз (уменьшать значение признака)
+     * Если step положительный, то будем двигать вверх (увеличивать значение признака)
+     * @param gen - признак, который будем сравнивать с точкой искомой функции
+     * @param fitness - точка искомой функции
+     * @return step - число, которое будем прибавлять к признаку для того, чтобы приблизить его к точке искомой функции
      */
-    public void mutateFromEuclid(double[] fitnessFunc){
-        //double[] x = WorkWithNumbers.getArrayFromTo(0.1, 0, 100);
+    public double getStep(double gen, double fitness){
+        double euclid = WorkWithNumbers.getEuclideanDistance(gen, fitness);// эвклидово расст между признаками и искомой функцией
+        double step; // число, которое будем прибавлять к признаку для того, чтобы приблизить его к точке искомой функции
 
-        // 1. считаем эвклидово расстояние для каждого из 10 участков для fitness function
-        double[] euclidForGroups = new double[10]; // эвклидово расстояние для каждого из 10 участков для fitness function
-        int startId = 0; // =0 так как отсчет начинаем в нулевого элемента и заканчиваем 10 - это первая группа
-        int endId = 10; // =10 так как отсчет заканчиваем на 10 - это первая группа
+        // сначала ставим 0.1, чтобы проверить: уменьшится ли эвклидово расстояние после того, как признак увеличится на это число
+        // это нужно для того, чтобы понять - в какую сторону изменять признак (уменьшать или увеличивать)
+        step = 0.1;
 
-        // в цикле проходим по каждому отрезку и считаем значение эвклидового расстояния
-        for (int i = 0; i < euclidForGroups.length; i++){
-            //double[] curXforFitness = new double[10]; // текущий отрезок по оси Х для искомой функции (fitness)
-            // и для признаков тоже, так как у них иксы совпадают (один из 10 участков функции)
-            double[] curYforFitness = new double[10]; // текущий отрезок по оси У для искомой функции (fitness) (один из 10 участков функции)
-            double[] curYforSigns = new double[10]; // текущий отрезок по оси У для признаков (один из 10 участков функции)
+        // считаем эвклид расст между точкой искомой функции и признаком, увеличенным на шаг step
+        double euclidWithStep = WorkWithNumbers.getEuclideanDistance(gen + step, fitness);
 
-            // здесь вносим в curXforFitness и curYforFitness значения из отрезка функции
-            for (int j = 0; j < curYforFitness.length; j++){
-                for (int k = startId; k < endId; k++){
-                    //curXforFitness[j] = fitnessFunc[k]; // вносим иксы
-                    curYforFitness[j] = fitnessFunc[k]; // вносим У для искомой ф-и
-                    curYforSigns[j] = signs[k]; // вносим признаки (признаки это У)
-                    signs[k] = fitnessFunc[k];
-                }
-            }
-
-            // считаем эвклидово расстояние между признаками и искомой функцией для текущего отрезка
-            euclidForGroups[i] = WorkWithNumbers.getEuclideanDistance(curYforFitness, curYforSigns);
-            //System.out.println("euclidForGroups " + i + ") ="+ euclidForGroups[i]);
-
-            // прибавляем 10 к началу и к концу, чтобы посчитать следующий отрезок
-            startId += 10;
-            endId += 10;
+        // сравниваем эвклидовые расстояние до и после увеличения на step
+        if (euclidWithStep < euclid){ // если увеличенное значение меньше исходного, тогда будем прибавлять (идем вверх по оси У)
+            step = 0.01;
+        } else if (euclid == euclidWithStep){  // если равны, то оставляем шаг 0, так как изменений нет
+            step = 0; // сюда мы вряд ли зайдем, но я сделала на вский случай
+        } else { // если увеличенное значение меньше исходного, тогда будем уменьшать (идем вниз по оси У)
+            step = -0.01;
         }
-        // итог: посчитали эвклидово расст между признаками и искомой функцией
-
-//        // 2. теперь сравниваем эвклидовые расст для групп и мутируем ту, что удаленна больше 1
-//        double EUCLID = 0.2;
-//        for (int i = 0; i < euclidForGroups.length; i++){
-//            if (euclidForGroups[i] > EUCLID){
-//                int idOfLastElementOfGroup = (i + 1) * 10;
-//                int idOfStartElementOfGroup = idOfLastElementOfGroup - 10;
-//
-//                // тут применяем трехточечную мутацию
-//                int size = 10; // количество элементов в группе
-//
-//                // определяются случайным образом три позиции
-//                // вызываем метод getRandom и прибавляем idOfStartElementOfGroup, так как мы действуем в рамках отрезка
-//                int position1 = WorkWithNumbers.getRandomFromTo(0, size-1) + idOfStartElementOfGroup;
-//                int position2 = WorkWithNumbers.getRandomFromTo(0, size-1) + idOfStartElementOfGroup;
-//
-//                // Гены, соответствующие выбранным позициям, переставляются
-//                double temp = signs[position1];
-//                signs[position1] = signs[position2];
-//                signs[position2] = temp;
-//
-//
-//            }
-//        }
-    }
-
-    public void mutateFromEuclid2(double[] fitnessFunc){
-        // 1. считаем эвклидово расстояние для каждого из 10 участков
-        double[] euclidForGroups = new double[10]; // эвклидово расстояние для каждого из 10 участков для fitness function
-        int startId = 0; // =0 так как отсчет начинаем в нулевого элемента и заканчиваем 10 - это первая группа
-        int endId = 10; // =10 так как отсчет заканчиваем на 10 - это первая группа
-
-        double EUCLID = 1;
-
-        // в цикле проходим по каждому отрезку и считаем значение эвклидового расстояния
-        for (int i = 0; i < euclidForGroups.length; i++){
-
-            double[] curYforFitness = new double[10]; // текущий отрезок по оси У для искомой функции (fitness) (один из 10 участков функции)
-            double[] curYforSigns = new double[10]; // текущий отрезок по оси У для признаков (один из 10 участков функции)
-
-            // здесь вносим в curXforFitness и curYforFitness значения из отрезка функции
-            for (int j = 0; j < curYforFitness.length; j++){
-                for (int k = startId; k < endId; k++){
-                    curYforFitness[j] = fitnessFunc[k]; // вносим У для искомой ф-и
-                    curYforSigns[j] = signs[k]; // вносим признаки (признаки это У)
-
-                }
-            }
-
-            // считаем эвклидово расстояние между признаками и искомой функцией для текущего отрезка
-            euclidForGroups[i] = WorkWithNumbers.getEuclideanDistance(curYforFitness, curYforSigns);
-
-            double lastEuclid = euclidForGroups[i];
-            double newEuclid = lastEuclid; // пока что
-
-            do {
-//                System.out.println("START OF DO-WHILE");
-//                System.out.println("BEFORE 1");
-//                System.out.println("euclidForGroups[i]=" + euclidForGroups[i]);
-//                System.out.println("newEuclid=" + newEuclid);
-//                System.out.println("lastEuclid=" + lastEuclid);
-                lastEuclid = newEuclid;
-//
-//                System.out.println("BEFORE 2");
-//                System.out.println("euclidForGroups[i]=" + euclidForGroups[i]);
-//                System.out.println("newEuclid=" + newEuclid);
-//                System.out.println("lastEuclid=" + lastEuclid);
-
-                for (int l = startId; l < endId; l++){
-                    System.out.print(signs[l] + " ");
-                }
-
-                // тут применяем трехточечную мутацию
-                int size = 10; // количество элементов в группе
-
-                int position1 = WorkWithNumbers.getRandomFromTo(0, size) + startId;
-                int position2 = WorkWithNumbers.getRandomFromTo(0, size) + startId;
-                int position3 = WorkWithNumbers.getRandomFromTo(0, size) + startId;
-
-                signs[position1] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2., 2.), 2);
-                signs[position2] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2., 2.), 2);
-                signs[position3] = WorkWithNumbers.round(WorkWithNumbers.getRandomDoubleFromTo(-2., 2.), 2);
-
-
-//                // определяются случайным образом три позиции
-//                // вызываем метод getRandom и прибавляем startId, так как мы действуем в рамках отрезка
-//                int position1 = WorkWithNumbers.getRandomFromTo(0, size-1) + startId;
-//                int position2 = WorkWithNumbers.getRandomFromTo(0, size-1) + startId;
-//
-//                // Гены, соответствующие выбранным позициям, переставляются
-//                double temp = signs[position1];
-//                signs[position1] = signs[position2];
-//                signs[position2] = temp;
-
-                // 2. пересчитываем эвклидово расстояние
-                // здесь вносим в newYforSigns значения из нового отрезка функции
-                double[] newYforSigns = new double[10];
-                for (int j = 0; j < newYforSigns.length; j++){
-                    for (int k = startId; k < endId; k++){
-                        newYforSigns[j] = signs[k]; // вносим признаки (признаки это У)
-                    }
-                }
-
-                newEuclid = WorkWithNumbers.getEuclideanDistance(curYforFitness, newYforSigns);
-//                System.out.println("AFTER");
-//                for (int l = startId; l < endId; l++){
-//                    System.out.print(signs[l] + " ");
-//                }
-//                System.out.println("euclidForGroups[i]=" + euclidForGroups[i]);
-//                System.out.println("newEuclid=" + newEuclid);
-//                System.out.println("lastEuclid=" + lastEuclid);
-//                System.out.println("END OF DO-WHILE");
-            } while ((euclidForGroups[i] > EUCLID)
-                    && (newEuclid > lastEuclid)
-            );
-            System.out.println("STOP OF DO-WHILE");
-
-
-
-
-            // прибавляем 10 к началу и к концу, чтобы посчитать следующий отрезок
-            startId += 10;
-            endId += 10;
-        }
-        // итог: посчитали эвклидово расст между признаками и искомой функцией
-
-//        // 2. теперь сравниваем эвклидовые расст для групп и мутируем ту, что удаленна больше 1.
-//        // Если после мутации эвклидово расстояние >= предыдущему то пересчет.
-//        double EUCLID = 1;
-//        // проходим по каждому элементу эвклидового расст
-//        for (int i = 0; i < euclidForGroups.length; i++){
-//            double lastEuclid = euclidForGroups[i];
-//            double newEuclid = lastEuclid;
-//
-//            do {
-//                // считаем индексы, т. к. работаем в рамках группы
-//                int idOfLastElementOfGroup = (i + 1) * 10;
-//                int idOfStartElementOfGroup = idOfLastElementOfGroup - 10;
-//
-//                // тут применяем трехточечную мутацию
-//                int size = 10; // количество элементов в группе
-//
-//                // определяются случайным образом три позиции
-//                // вызываем метод getRandom и прибавляем idOfStartElementOfGroup, так как мы действуем в рамках отрезка
-//                int position1 = WorkWithNumbers.getRandomFromTo(0, size-1) + idOfStartElementOfGroup;
-//                int position2 = WorkWithNumbers.getRandomFromTo(0, size-1) + idOfStartElementOfGroup;
-//
-//                // Гены, соответствующие выбранным позициям, переставляются
-//                double temp = signs[position1];
-//                signs[position1] = signs[position2];
-//                signs[position2] = temp;
-//
-//                // 2. пересчитываем эвклидово расстояние
-//                lastEuclid = WorkWithNumbers.getEuclideanDistance();
-//
-//                double[] curYforFitness = new double[10]; // текущий отрезок по оси У для искомой функции (fitness) (один из 10 участков функции)
-//                double[] curYforSigns = new double[10]; // текущий отрезок по оси У для признаков (один из 10 участков функции)
-//
-//                // здесь вносим в curXforFitness и curYforFitness значения из отрезка функции
-//                for (int j = 0; j < curYforFitness.length; j++){
-//                    for (int k = startId; k < endId; k++){
-//                        //curXforFitness[j] = fitnessFunc[k]; // вносим иксы
-//                        curYforFitness[j] = fitnessFunc[k]; // вносим У для искомой ф-и
-//                        curYforSigns[j] = signs[k]; // вносим признаки (признаки это У)
-//                    }
-//                }
-//
-//
-////                // проходим по массиву признаков между индексов idOfLastElementOfGroup и idOfStartElementOfGroup
-////                for (int j = idOfStartElementOfGroup; j < idOfLastElementOfGroup; j++) {
-////                    // 1. тут применяем трехточечную мутацию
-////                    int size = 10; // количество элементов в группе
-////
-////                    // определяются случайным образом три позиции
-////                    // вызываем метод getRandom и прибавляем idOfStartElementOfGroup, так как мы действуем в рамках отрезка
-////                    int position1 = WorkWithNumbers.getRandomFromTo(0, size - 1) + idOfStartElementOfGroup;
-////                    int position2 = WorkWithNumbers.getRandomFromTo(0, size - 1) + idOfStartElementOfGroup;
-////                    int position3 = WorkWithNumbers.getRandomFromTo(0, size - 1) + idOfStartElementOfGroup;
-////
-////                    // Гены, соответствующие выбранным позициям, переставляются
-////                    double temp = signs[position1];
-////                    signs[position1] = signs[position3];
-////                    signs[position3] = signs[position2];
-////                    signs[position2] = temp;
-////
-////
-////                }
-//
-//            } while ((euclidForGroups[i] > EUCLID) && (newEuclid > lastEuclid));
-//
-//
-//        }
-
-
+        return step;
     }
 
     public int getNumberOfSigns() {
@@ -492,7 +277,7 @@ public class Individidual implements Comparable<Individidual>{
      * @param requiredFunction - искомая функция
      * @return
      */
-    public void getEuclidDistanceForSignsWithRequiredFunc(double[] requiredFunction) {
+    public void countEuclidDistanceForSignsWithRequiredFunc(double[] requiredFunction) {
         this.euclidDist = WorkWithNumbers.getEuclideanDistance(this.signs, requiredFunction);
     }
 
@@ -508,13 +293,19 @@ public class Individidual implements Comparable<Individidual>{
         return euclidDist;
     }
 
-
+    /**
+     * переопределенная функция от Comparable.
+     * нужна для того, чтобы сравнивать две особи между собой. Сравниваем особи по значению эвклидова расстояния
+     * @param ind - особь, с которой сравниваем
+     * @return 1 - больше,
+     *         -1 - меньше,
+     *         0 - равны
+     */
     @Override
     public int compareTo(Individidual ind) {
-        if (this.getEuclidDist() < ind.getEuclidDist()){
-            return -1;
-        }else{
-            return 1;
-        }
+        // делаем BigDecimal, чтобы было более точное сравнение чисел
+        BigDecimal bd1 = BigDecimal.valueOf(this.getEuclidDist());
+        BigDecimal bd2 = BigDecimal.valueOf(ind.getEuclidDist());
+        return bd1.compareTo(bd2);
     }
 }

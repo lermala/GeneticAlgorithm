@@ -38,6 +38,19 @@ public class WorkWithNumbers {
     }
 
     /**
+     * Общая формула евклидова расстояния для 2-мерного случая
+     * @param x - первая точка
+     * @param y - вторая точка
+     * @return
+     */
+    public static double getEuclideanDistance(double x, double y){
+        double d;
+        d = Math.pow( (x - y), 2 );
+        d = Math.sqrt(d);
+        return d;
+    }
+
+    /**
      * Создание массива int со случайными числами (здесь от 0.1 до 10.0) можно убрать и поставить
      * в переменные функции, но мне было лень
      * @param countOfElements - количество элементов, которые нужно сгенерировать
@@ -59,8 +72,8 @@ public class WorkWithNumbers {
      */
     public static double[] getRandomArray(int countOfElements) {
         double[] randomArray = new double[countOfElements];
-        double rangeMin = -2.0;
-        double rangeMax = 2.0;
+        double rangeMin = -2.0; //TODO: вынести в параметры функции либо менять прям тут
+        double rangeMax = 2.0; //TODO: вынести в параметры функции либо менять прям тут
         Random r = new Random();
 
         for(int i = 0; i < countOfElements; ++i) {

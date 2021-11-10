@@ -24,14 +24,14 @@ public class Controller extends Application {
         // создание графика
         final LineChart<Number,Number> lineChart = new LineChart<Number,Number>(xAxis,yAxis);
 
-        lineChart.setTitle("Признаки особи с наименьшим эвклидовым расстоянием в виде графика и график функции Y=ln(2x)");
+//        lineChart.setTitle("Признаки особи с наименьшим эвклидовым расстоянием в виде графика и график функции Y=ln(2x)");
         // Делаем график искомой функции
         XYChart.Series series1 = new XYChart.Series();
         series1.setName("Искомая функция");
 
         // создаем популяцию с 20ю особями, по 100 признаков у каждой
         Population population = new Population(20, 100);
-        population.createPopulation2(); // заполняем популяцию особями
+        population.createPopulation(); // заполняем популяцию особями
 
         double[] x = population.getxForRequiredFunc();
         double[] y = population.getRequiredFunction();//ln
@@ -59,10 +59,6 @@ public class Controller extends Application {
         for (int i = 0; i < x.length; i++){
             series2.getData().add(new XYChart.Data(x2[i], y2[i]));
         }
-
-        // считаем эвклидового расстояние между ними
-        double euc = WorkWithNumbers.getEuclideanDistance(y, y2);
-        System.out.println("euc=" + euc);
 
         FlowPane root = new FlowPane(lineChart, lineChart2);
         Scene scene  = new Scene(root);
