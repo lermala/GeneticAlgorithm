@@ -34,11 +34,12 @@ public class Population {
         int count = 0; // кол-во популяций, прошедших цикл
         do {
             // 3. Создать алгоритм, размножения и мутации, способный на каждом шаге удваивать популяцию.
+            // TODO: Можно выбрать один из трех кроссинговеров, остальные удалить из класса, чтобы лишнего не было.
             // crossoverBySinglePointOperator(); // одноточечный кроссовер
             //crossoverByTwoPointOperator(); // двухточечный кроссовер
             crossoverByThreePointsOperator(); // трехточечный кроссовер
 
-            mutatePopulation();
+            mutatePopulation(); // TODO: внутри метода поменять метод мутации (у меня используется тот, который мне посоветовал Массель)
 
             // 4. Уничтожать половину удвоенной популяции, эвклидово расстояние признаков
             // которых максимально удалено от искомой функции.
@@ -69,7 +70,9 @@ public class Population {
     public void createPopulation(){
         // создаем 20 особей, у каждой 100 признаков
         for (int i = 0; i < numberOfIndividual; i++){
-            double[] signs = WorkWithNumbers.getRandomArray(numberOfSigns); // массив признаков для текущей особи
+            // TODO: можно поменять параметры rangeMin rangeMax на те, которые более приближенны к вашим игрикам. У меня логарифм, поэтому я взяла от -2 до 2.
+            // TODO: можно оставить, но тогда будет значительно больше поколений проходить.
+            double[] signs = WorkWithNumbers.getRandomArray(numberOfSigns, -2.0, 2.0); // массив признаков для текущей особи
             Individidual individidual = new Individidual(numberOfSigns); // создаем особь
 
             individidual.setSigns(signs); // добавляем особи признаки
@@ -193,7 +196,8 @@ public class Population {
     public void mutatePopulation(){
         for (Individidual el:
                 population) {
-            el.mutateInStepIncrease(requiredFunction);
+            el.mutateInStepIncrease(requiredFunction); // TODO: поменять метод мутации (сначала попробовать двухточечный, но если эвклид расст не опускается, то думать какой-то свой, можно посоветоваться с Массель
+            // можно сделать любой метод
         }
     }
 

@@ -24,7 +24,6 @@ public class Controller extends Application {
         // создание графика
         final LineChart<Number,Number> lineChart = new LineChart<Number,Number>(xAxis,yAxis);
 
-//        lineChart.setTitle("Признаки особи с наименьшим эвклидовым расстоянием в виде графика и график функции Y=ln(2x)");
         // Делаем график искомой функции
         XYChart.Series series1 = new XYChart.Series();
         series1.setName("Искомая функция");

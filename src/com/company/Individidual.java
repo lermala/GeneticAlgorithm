@@ -290,7 +290,7 @@ public class Individidual implements Comparable<Individidual>{
     }
 
     public double getEuclidDist() {
-        return euclidDist;
+        return WorkWithNumbers.round(euclidDist, 1);
     }
 
     /**

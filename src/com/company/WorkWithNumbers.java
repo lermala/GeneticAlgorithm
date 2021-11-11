@@ -15,11 +15,6 @@ public class WorkWithNumbers {
         return random_number;
     }
 
-    public static double getRandomDoubleFromTo(double a, double b) {
-        double random_number = a + Math.random() * b;
-        return random_number;
-    }
-
     /**
      * Общая формула евклидова расстояния для n-мерного случая (n переменных)  (https://studopedia.info/5-63128.html)
      * @param x - первая точка
@@ -68,12 +63,12 @@ public class WorkWithNumbers {
      * Создание массива double со случайными числами (здесь от 0.1 до 10.0) можно убрать и поставить
      * в переменные функции, но мне было лень
      * @param countOfElements - количество элементов, которые нужно сгенерировать
+     * @param rangeMin - от этого числа начнется генериция
+     * @param rangeMax - до этого числа будем генерировать
      * @return массив чисел
      */
-    public static double[] getRandomArray(int countOfElements) {
+    public static double[] getRandomArray(int countOfElements, double rangeMin, double rangeMax) {
         double[] randomArray = new double[countOfElements];
-        double rangeMin = -2.0; //TODO: вынести в параметры функции либо менять прям тут
-        double rangeMax = 2.0; //TODO: вынести в параметры функции либо менять прям тут
         Random r = new Random();
 
         for(int i = 0; i < countOfElements; ++i) {
@@ -114,7 +109,7 @@ public class WorkWithNumbers {
 
         // здесь заполняем массив. Y=ln(2x)
         for (int i = 0; i < countOfElements; i++){
-            y[i] = 2 * Math.log10(x[i]);
+            y[i] = Math.log10(x[i] * 2); // TODO: поменять эту строчку. Здесь будет функция по твоему варианту
             y[i] = round(y[i], 2);
         }
 
